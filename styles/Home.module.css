@@ -1,5 +1,5 @@
 .container {
-  padding: 0 2rem;
+  padding-top: 0 2rem;
 }
 
 .main {
@@ -26,6 +26,8 @@
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .title a {
@@ -136,6 +138,10 @@
   text-align: justify;
 }
 
+.homeTextHeading {
+  text-align: center;
+}
+
 .headerIcons {
   display: flex;
   justify-content: space-evenly;
@@ -144,6 +150,7 @@
 .geistHeaderIcon {
   margin: 10px;
   opacity: 0.9;
+  cursor: pointer;
 }
 
 .headerText {
@@ -161,4 +168,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.pageContent {
+  padding-top: 1em !important;
 }

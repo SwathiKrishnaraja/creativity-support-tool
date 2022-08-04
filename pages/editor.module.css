@@ -43,15 +43,11 @@
   height: 70vh !important;
 }
 
-.textEditorSubmit {
-  width: 200px !important;
-  height: 60px !important;
-}
-
 .textEditorHeading1 {
   font-size: 1.4rem;
   font-weight: 500;
   opacity: 0.8;
+  margin: 0px;
 }
 
 .textEditorHeading2 {
@@ -67,6 +63,14 @@
   height: 70vh !important;
 }
 
+.editorLayout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: space-between;
+}
+
 .resultContainer {
   display: flex;
   flex-direction: column;
@@ -80,8 +84,24 @@
   opacity: 0.8;
 }
 
+.resultHeadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bubblesFeedback {
+  display: flex;
+  min-height: 220px;
+  border: 2.4px solid rgb(234, 234, 234);
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
 .creativityLink {
-  font-size: 0.9rem !important;
+  font-size: 1rem !important;
+  color: rgb(50, 135, 101) !important;
 }
 
 .creativityLevel1 span:nth-child(2) {
@@ -135,7 +155,38 @@
   justify-content: space-between;
 }
 
-.inspireMeButton {
-  width: 200px !important;
-  height: 50px !important;
+.bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+
+.topicA {
+  width: 100px !important;
+  height: 100px !important;
+  margin: 10px !important;
+  background: rgb(151 162 88) !important;
+}
+
+.topicB {
+  width: 60px !important;
+  height: 60px !important;
+  margin: 10px !important;
+  background: rgb(163 130 78) !important;
+}
+
+.topicC {
+  width: 140px !important;
+  height: 140px !important;
+  margin: 10px !important;
+  background: rgb(206 151 172) !important;
+}
+
+.bubbleTopicHeading {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  font-weight: 500;
+  margin: 0px;
 }
