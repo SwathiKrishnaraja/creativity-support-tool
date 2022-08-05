@@ -12,16 +12,10 @@ import {
   Dot,
   Avatar,
 } from '@geist-ui/react'
-import Link from 'next/link'
 import Bubble from '../components/Bubble'
+import Link from 'next/link'
 
 const Editor: NextPage = () => {
-  const colors = {
-    20: '#58A984',
-    40: '#328765',
-    60: '#1C5A46',
-    80: '#003C31',
-  }
   return (
     <>
       <Grid.Container gap={2} justify="center" height="100%">
@@ -46,9 +40,6 @@ const Editor: NextPage = () => {
               placeholder="Now is the optimal workflow for frontend teams. All-in-one: Static and JAMstack deployment, Serverless Functions, and Global CDN."
             />
             <Spacer w={2} />
-            <Button type="secondary-light" className={styles.textEditorSubmit}>
-              Submit
-            </Button>
           </div>
         </Grid>
 
@@ -78,41 +69,27 @@ const Editor: NextPage = () => {
 
               <div>
                 <Text h1 className={styles.textEditorHeading2}>
-                  Here are a few topics we identified from your essay. The size
-                  of the bubble depicts the weight of these topics in your
-                  essay.
+                  Here are a few topics we identified for inspiring you with
+                  ideas for improvising your essay. Get inspired with new and
+                  creative dimensions.
                 </Text>
 
                 <div className={styles.bubblesFeedback}>
                   {/* placeholder to show the topic feedback as bubbles */}
                   <Bubble size={80} name="Sea Level increase" color="#AFCC91" />
+                  <Bubble size={30} name="Global warming" color="#FCB939" />
+                  <Bubble size={20} name="Forest fires" color="#EB95B4" />
                   <Bubble size={60} name="Deforestation" color="#4E9EA3" />
                   <Bubble size={40} name="Natural gas" color="#C196CC" />
                 </div>
 
                 <Spacer w={10} />
-
-                {/* Progress bar and feedback legend */}
-                <Progress colors={colors} type="success" value={25} />
-                <Spacer w={10} />
-                <div className={styles.resultDots}>
-                  <Dot type="error" className={styles.creativityLevel1}>
-                    Everyday
-                  </Dot>
-                  <Dot type="warning" className={styles.creativityLevel2}>
-                    Transformative
-                  </Dot>
-                  <Dot className={styles.creativityLevel3}>Professional</Dot>
-                  <Dot type="success" className={styles.creativityLevel4}>
-                    Eminent
-                  </Dot>
-                </div>
               </div>
             </div>
             <Spacer w={5} />
-            <Link href="/inspiration">
+            <Link href="/editor">
               <Button type="secondary-light" className={styles.inspireMeButton}>
-                Inspire me
+                Go back and update
               </Button>
             </Link>
           </div>
