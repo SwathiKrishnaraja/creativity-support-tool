@@ -24,6 +24,11 @@ const Editor: NextPage = () => {
   }
   return (
     <>
+     <div className={styles.h6} >
+        <h6>To know about how this educational application works, and what algorithms our tool uses, click <a href="/information" className={styles.hereButton}> here</a>.   </h6>          
+    </div>
+      <Spacer w={3} />
+      <Spacer w={3} />
       <Grid.Container gap={2} justify="center" height="100%">
         {/* Text editor */}
         <Grid xs={24} md={12} className={styles.textEditor}>
@@ -69,7 +74,7 @@ const Editor: NextPage = () => {
                   className={styles.tooltip}
                 >
                   <GeistLink color href="#" className={styles.creativityLink}>
-                    What is creativity ?
+                    What is creativity?
                   </GeistLink>
                 </Tooltip>
               </div>
@@ -92,8 +97,25 @@ const Editor: NextPage = () => {
 
                 <Spacer w={10} />
 
+                <div className={styles.inspirationText}>
+                <h5>We identified the following strengths in your creative writing style: </h5>
+                <ul className={styles.list1}>
+                  <li>Your idea X in the sentence Y was unique compared to others</li>
+                  <li>Your idea X in the sentence Y was unique compared to others</li>
+                </ul>
+                </div>
+
+                <div className={styles.inspirationText}>
+                <h5>Here are a few suggestions for improving your essay: </h5>
+                <ul className={styles.list2}>
+                  <li>Sentence X is missing some logical connection</li> 
+                </ul>
+                </div>
+
                 {/* Progress bar and feedback legend */}
+                <h6>Your creative level so far:</h6> 
                 <Progress colors={colors} type="success" value={25} />
+                
                 <Spacer w={10} />
                 <div className={styles.resultDots}>
                   <Dot type="error" className={styles.creativityLevel1}>
@@ -123,3 +145,4 @@ const Editor: NextPage = () => {
 }
 
 export default Editor
+
