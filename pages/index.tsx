@@ -25,7 +25,7 @@ const Home: NextPage = () => {
             </div>
             <div>
               <Link href="/editor">
-                <Button type="secondary-light">Explore creativity tool</Button>
+                <Button type="secondary-light">Let's Begin!</Button>
               </Link>
             </div>
           </div>
