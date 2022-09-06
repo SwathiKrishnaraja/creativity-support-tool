@@ -159,7 +159,7 @@
   font-size: 2.5rem;
   font-weight: 600;
   letter-spacing: -0.05em;
-  margin-top: 50px;
+  margin-top: 0px !important;
   text-align: left;
   opacity: 0.9;
 }
@@ -221,7 +221,7 @@
 }
 
 .textEditorHeading1 {
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 500;
   opacity: 0.8;
   margin: 0px;
@@ -256,7 +256,7 @@
 
 .resultHeading {
   margin-top: 0px;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 500;
   opacity: 0.8;
 }
