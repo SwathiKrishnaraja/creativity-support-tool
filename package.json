@@ -12,7 +12,7 @@
     "@geist-ui/core": "^2.3.8",
     "@geist-ui/icons": "^1.0.2",
     "@geist-ui/react": "^2.2.5",
-    "next": "^12.2.2",
+    "next": "^12.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
