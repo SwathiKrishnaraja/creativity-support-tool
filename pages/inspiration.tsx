@@ -85,6 +85,11 @@ const Editor: NextPage = () => {
 
                 <Spacer w={10} />
               </div>
+              <div>
+              <Text h1 className={styles.textEditorHeading2}>
+              Note that, the smaller the size of the bubble, the higher it’s creative value. Therefore, try integrating new ideas from these inspirations and see if it improves your creative abilities. 
+              </Text>
+              </div>
             </div>
             <Spacer w={5} />
             <Link href="/editor">

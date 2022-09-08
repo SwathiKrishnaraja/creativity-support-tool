@@ -19,57 +19,79 @@ import React from 'react'
 const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
   console.log('submit tapped');
   let textEditor = document.getElementById('text-editor');
-  setLoadingIndicatorOpen(false);
-  let topics = [
-    0,
-    2,
-    3,
-    1,
-    7,
-    2,
-    1,
-    3,
-    4,
-    5,
-    4,
-    1,
-    2,
-    0,
-  ];
-  setState({
-    ...state,
-    data: {
-      fluency: 0.46,
-      flexibility: 0.67,
-      originality: 0.2,
-      topics: topics,
-      currentPage: 'initial'
-    }
-  });
+  // setLoadingIndicatorOpen(false);
+  // let topics = [
+  //   0,
+  //   2,
+  //   3,
+  //   1,
+  //   7,
+  //   2,
+  //   1,
+  //   3,
+  //   4,
+  //   5,
+  //   4,
+  //   1,
+  //   2,
+  //   0,
+  // ];
+  // setState({
+  //   ...state,
+  //   data: {
+  //     fluency: 0.46,
+  //     flexibility: 0.67,
+  //     originality: 0.2,
+  //     topics: topics,
+  //     currentPage: 'initial'
+  //   }
+  // });
 
-  let sentences = text.split('. ');
-  let textEditorElement = document.getElementById('text-editor');
-  console.log("element", textEditorElement);
-  textEditorElement.innerHTML = "";
-  for (let i = 0; i < sentences.length; i++) {
-    let sentence = sentences[i];
-    textEditorElement.innerHTML += "<span class=\"span-" + topics[i] + "\">" + sentence + ".</span> ";
-  }
-  console.log("element", textEditorElement.innerHTML);
-  return;
-
-  fetch("http://localhost:8000/get-creativity/" + encodeURIComponent(textEditor.innerHTML), { // TODO: Change URL
-    method: "GET",
-    headers: {},
-    body: ""
+  // let sentences = text.split('. ');
+  // let textEditorElement = document.getElementById('text-editor');
+  // console.log("element", textEditorElement);
+  // textEditorElement.innerHTML = "";
+  // for (let i = 0; i < sentences.length; i++) {
+  //   let sentence = sentences[i];
+  //   textEditorElement.innerHTML += "<span class=\"span-" + topics[i] + "\">" + sentence + ".</span> ";
+  // }
+  // console.log("element", textEditorElement.innerHTML);
+  // return;
+  console.log("body", JSON.stringify({
+    text: textEditor.innerText,
+    dataset: "climate_change"
+  }));
+  fetch("http://3.70.5.36/creativity/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text: textEditor.innerText,
+      dataset: "climate_change"
+    })
   }).then(response => {
     response.json().then(data => {
       console.log(data);
       setLoadingIndicatorOpen(false);
       setState({
         ...state,
-        data: data
+        data: {
+          fluency: data.fluency,
+          flexibility: data.flexibility,
+          originality: data.originality,
+          topics: data.topics,
+          currentPage: 'initial'
+        }
       });
+      let textEditorElement = document.getElementById('text-editor');
+      let sentences = textEditorElement.innerText.split('. ');
+      console.log("element", textEditorElement);
+      textEditorElement.innerHTML = "";
+      for (let i = 0; i < sentences.length; i++) {
+        let sentence = sentences[i];
+        textEditorElement.innerHTML += "<span class=\"span-" + data.topics[i] + "\">" + sentence + ".</span> ";
+      }
     }).catch(err => {
       console.log(err);
       setLoadingIndicatorOpen(false);
@@ -219,6 +241,11 @@ const Editor: NextPage = () => {
 
   return (
     <>
+     <div className={styles.h6} >
+        <h6>To know about how this educational application works, and what algorithms our tool uses, click <a href="/information" className={styles.hereButton}> here</a>.   </h6>          
+    </div>
+      <Spacer w={3} />
+      <Spacer w={3} />
       <Grid.Container gap={2} justify="center" height="100%">
         {/* Text editor */}
         <Grid xs={24} md={12} className={styles.textEditor}>
@@ -352,9 +379,7 @@ const Editor: NextPage = () => {
                     );
                   })}
                 </ul>
-                </div>
-
-                
+                </div> 
               </div>
                 </>)}  
               
@@ -430,3 +455,4 @@ const Editor: NextPage = () => {
 }
 
 export default Editor
+
