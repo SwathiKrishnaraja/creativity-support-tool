@@ -64,11 +64,14 @@ const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
   //     dataset: 'climate_change',
   //   })
   // )
-  fetch('http://3.70.5.36/creativity/', {
+  fetch('https://creativitysupporttool.de/creativity ', {
     method: 'POST',
+    cache: 'no-cache',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8',
+      accept: 'application/json',
     },
+    // mode: 'no-cors',
     body: JSON.stringify({
       text: textEditor.innerText,
       dataset: 'climate_change',
@@ -194,7 +197,39 @@ const getTopicColorFromID = (id) => {
 }
 
 const getStrengthsFromData = (data) => {
-  return ['Strength', 'Super Strength'] // any text you want based on data.fluency, etc.
+  const { fluency, flexibility, originality } = data
+
+  if (fluency < 50 && flexibility < 50 && originality < 50) {
+    return 'first text'
+  }
+
+  if (fluency > 50 && flexibility > 50 && originality < 50) {
+    return 'second text'
+  }
+
+  if (fluency > 50 && flexibility < 50 && originality < 50) {
+    return 'third text'
+  }
+
+  if (fluency < 50 && flexibility < 50 && originality > 50) {
+    return 'fourth text'
+  }
+
+  if (fluency > 50 && flexibility > 50 && originality > 50) {
+    return 'fifth text'
+  }
+
+  if (fluency > 50 && flexibility < 50 && originality > 50) {
+    return 'sixth text'
+  }
+
+  if (fluency < 50 && flexibility > 50 && originality < 50) {
+    return 'seventh text'
+  }
+
+  if (fluency < 50 && flexibility > 50 && originality > 50) {
+    return 'eight text'
+  }
 }
 
 const otherThanTopics = (topics) => {
@@ -443,16 +478,14 @@ const Editor: NextPage = () => {
                       We identified the following strenghts in your creative
                       writing style: <br />
                       <ul>
-                        {getStrengthsFromData(state.data).map((strength) => {
-                          return (
-                            <>
-                              <span style={{ textAlign: 'center' }}>
-                                {strength}
-                              </span>
-                              <br />
-                            </>
-                          )
-                        })}
+                        {
+                          <>
+                            <span style={{ textAlign: 'center' }}>
+                              {getStrengthsFromData(state.data)}
+                            </span>
+                            <br />
+                          </>
+                        }
                       </ul>
                     </div>
                   </div>
