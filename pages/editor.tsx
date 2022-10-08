@@ -71,7 +71,6 @@ const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
       'Content-Type': 'application/json;charset=UTF-8',
       accept: 'application/json',
     },
-    mode: 'no-cors',
     body: JSON.stringify({
       text: textEditor.innerText,
       dataset: 'climate_change',
