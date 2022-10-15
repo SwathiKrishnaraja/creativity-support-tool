@@ -34,7 +34,6 @@ const submitTapped = (
   userEssay,
   dispatch
 ) => {
-  console.log('submit tapped')
   let textEditor = document.getElementById('text-editor')
 
   fetch('https://creativitysupporttool.de/creativity ', {
@@ -53,7 +52,6 @@ const submitTapped = (
       response
         .json()
         .then((data) => {
-          console.log(data)
           setLoadingIndicatorOpen(false)
           setState({
             ...state,
@@ -104,7 +102,6 @@ const submitTapped = (
 
           let textEditorElement = document.getElementById('text-editor')
           let sentences = textEditorElement.innerText.split('. ')
-          console.log('element', textEditorElement)
           textEditorElement.innerHTML = ''
           for (let i = 0; i < sentences.length; i++) {
             let sentence = sentences[i]
@@ -190,7 +187,6 @@ const Editor: NextPage = () => {
 
   const inspireMeTapped = (state, setState) => {
     setIsInspired(true)
-    console.log('inspire me tapped')
     if (state.data.currentPage === 'initial') {
       setState({
         ...state,
