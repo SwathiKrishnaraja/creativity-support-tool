@@ -19,51 +19,7 @@ import React from 'react'
 const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
   console.log('submit tapped')
   let textEditor = document.getElementById('text-editor')
-  // setLoadingIndicatorOpen(false);
-  // let topics = [
-  //   0,
-  //   2,
-  //   3,
-  //   1,
-  //   7,
-  //   2,
-  //   1,
-  //   3,
-  //   4,
-  //   5,
-  //   4,
-  //   1,
-  //   2,
-  //   0,
-  // ];
-  // setState({
-  //   ...state,
-  //   data: {
-  //     fluency: 0.46,
-  //     flexibility: 0.67,
-  //     originality: 0.2,
-  //     topics: topics,
-  //     currentPage: 'initial'
-  //   }
-  // });
 
-  // let sentences = text.split('. ');
-  // let textEditorElement = document.getElementById('text-editor');
-  // console.log("element", textEditorElement);
-  // textEditorElement.innerHTML = "";
-  // for (let i = 0; i < sentences.length; i++) {
-  //   let sentence = sentences[i];
-  //   textEditorElement.innerHTML += "<span class=\"span-" + topics[i] + "\">" + sentence + ".</span> ";
-  // }
-  // console.log("element", textEditorElement.innerHTML);
-  // return;
-  // console.log(
-  //   'body',
-  //   JSON.stringify({
-  //     text: textEditor.innerText,
-  //     dataset: 'climate_change',
-  //   })
-  // )
   fetch('https://creativitysupporttool.de/creativity ', {
     method: 'POST',
     cache: 'no-cache',
