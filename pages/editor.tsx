@@ -4,19 +4,36 @@ import {
   Grid,
   Text,
   Tooltip,
-  Textarea,
   Button,
   Spacer,
   Link as GeistLink,
   Progress,
-  Dot,
-  Avatar,
 } from '@geist-ui/react'
 import Link from 'next/link'
 import Bubble from '../components/Bubble'
-import React from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
+import {
+  getTopicCaptionFromID,
+  getTopicsDataFromTopics,
+  getStrengthsFromData,
+  getTopicColorFromID,
+  otherThanTopics,
+  submitUserEssay,
+} from '../utils'
 
-const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
+enum UserEssayAction {
+  INITIAL = 'initial',
+  INSPIRED = 'inspired',
+}
+
+const submitTapped = (
+  setLoadingIndicatorOpen,
+  state,
+  setState,
+  isInspired,
+  userEssay,
+  dispatch
+) => {
   console.log('submit tapped')
   let textEditor = document.getElementById('text-editor')
 
@@ -48,6 +65,43 @@ const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
               currentPage: 'initial',
             },
           })
+
+          if (!isInspired) {
+            dispatch({
+              type: UserEssayAction.INITIAL,
+              payload: {
+                text: textEditor.innerText,
+                fluency: data.fluency,
+                flexibility: data.flexibility,
+                originality: data.originality,
+              },
+            })
+          }
+
+          if (isInspired && !userEssay.inspired.text) {
+            dispatch({
+              type: UserEssayAction.INSPIRED,
+              payload: {
+                text: textEditor.innerText,
+                fluency: data.fluency,
+                flexibility: data.flexibility,
+                originality: data.originality,
+              },
+            })
+
+            submitUserEssay({
+              userEssay: {
+                ...userEssay,
+                inspired: {
+                  text: textEditor.innerText,
+                  fluency: data.fluency,
+                  flexibility: data.flexibility,
+                  originality: data.originality,
+                },
+              },
+            })
+          }
+
           let textEditorElement = document.getElementById('text-editor')
           let sentences = textEditorElement.innerText.split('. ')
           console.log('element', textEditorElement)
@@ -73,134 +127,46 @@ const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
     })
 }
 
-const getTopicsDataFromTopics = (topics) => {
-  let topicsData = [] // [{id: 0, count: 5}, ...]
-  let totalCount = 0
-  for (let i = 0; i < topics.length; i++) {
-    let topic = topics[i]
-    let topicData = topicsData.find((topicData) => topicData.id === topic)
-    if (topicData) {
-      topicData.count++
-    } else {
-      topicsData.push({ id: topic, count: 1 })
-    }
-    totalCount += 1
-  }
-  return [topicsData, totalCount]
-}
-
-const getTopicCaptionFromID = (id) => {
-  switch (id) {
-    case 0:
-      return 'Climate Change'
-    case 1:
-      return 'Public Transportation'
-    case 2:
-      return 'Reneable Energy'
-    case 3:
-      return 'Trees and Deforestation'
-    case 4:
-      return 'Pollution Reduction'
-    case 5:
-      return 'Food Products'
-    case 6:
-      return 'Governments and Companies'
-    case 7:
-      return 'Recycling and Packaging'
-    case 8:
-      return 'Water and Heat'
-    case 9:
-      return 'Lights and Appliances'
-    case 10:
-      return 'Fashion and Clothes'
-    case 11:
-      return 'Food Waste and Leftover'
-    default:
-      return 'Unknown Topic'
-  }
-}
-
-const getTopicColorFromID = (id) => {
-  switch (id) {
-    case 0:
-      return 'green'
-    case 1:
-      return 'purple'
-    case 2:
-      return 'orange'
-    case 3:
-      return 'darkgreen'
-    case 4:
-      return 'brown'
-    case 5:
-      return 'red'
-    case 6:
-      return 'blue'
-    case 7:
-      return 'grey'
-    case 8:
-      return 'lightblue'
-    case 9:
-      return 'yellow'
-    case 10:
-      return 'magenta'
-    case 11:
-      return 'darkorange'
-    default:
-      return 'black'
-  }
-}
-
-const getStrengthsFromData = (data) => {
-  const { fluency, flexibility, originality } = data
-
-  if (fluency < 50 && flexibility < 50 && originality < 50) {
-    return 'first text'
-  }
-
-  if (fluency > 50 && flexibility > 50 && originality < 50) {
-    return 'second text'
-  }
-
-  if (fluency > 50 && flexibility < 50 && originality < 50) {
-    return 'third text'
-  }
-
-  if (fluency < 50 && flexibility < 50 && originality > 50) {
-    return 'fourth text'
-  }
-
-  if (fluency > 50 && flexibility > 50 && originality > 50) {
-    return 'fifth text'
-  }
-
-  if (fluency > 50 && flexibility < 50 && originality > 50) {
-    return 'sixth text'
-  }
-
-  if (fluency < 50 && flexibility > 50 && originality < 50) {
-    return 'seventh text'
-  }
-
-  if (fluency < 50 && flexibility > 50 && originality > 50) {
-    return 'eight text'
-  }
-}
-
-const otherThanTopics = (topics) => {
-  let otherThanTopics = []
-  for (let i = 0; i < 12; i++) {
-    if (!topics.find((topic) => topic.id === i)) {
-      otherThanTopics.push({ id: i, count: 4 })
-    }
-  }
-  return otherThanTopics
-}
-
 let text =
   'Please start writing your story below, and get feedback on how novel your ideas are, and how original your story work is. The tool does not provide feedback on your grammar or writing styles, rather it provides feedback on the creative quality of your ideas, and quantity of ideas. Please start writing your story below, and get feedback on how novel your ideas are, and how original your story work is. The tool does not provide feedback on your grammar or writing styles, rather it provides feedback on the creative quality of your ideas, and quantity of ideas. Please start writing your story below, and get feedback on how novel your ideas are.'
 
+const essayReducer = (state, action) => {
+  const { type, payload } = action
+  switch (type) {
+    case UserEssayAction.INITIAL:
+      return {
+        ...state,
+        initial: payload,
+      }
+
+    case UserEssayAction.INSPIRED:
+      return {
+        ...state,
+        inspired: payload,
+      }
+
+    default:
+      return state
+  }
+}
 const Editor: NextPage = () => {
+  const [userEssay, dispatch] = useReducer(essayReducer, {
+    initial: {
+      text: '',
+      fluency: 0,
+      originality: 0,
+      flexibility: 0,
+    },
+    inspired: {
+      text: '',
+      fluency: 0,
+      originality: 0,
+      flexibility: 0,
+    },
+  })
+
+  const [isInspired, setIsInspired] = useState(false)
+
   const [isLoadingIndicatorOpen, setLoadingIndicatorOpen] =
     React.useState(false)
   const [state, setState] = React.useState({
@@ -223,6 +189,7 @@ const Editor: NextPage = () => {
   }
 
   const inspireMeTapped = (state, setState) => {
+    setIsInspired(true)
     console.log('inspire me tapped')
     if (state.data.currentPage === 'initial') {
       setState({
@@ -289,7 +256,14 @@ const Editor: NextPage = () => {
               type="secondary-light"
               className={styles.textEditorSubmit}
               onClick={() =>
-                submitTapped(setLoadingIndicatorOpen, state, setState)
+                submitTapped(
+                  setLoadingIndicatorOpen,
+                  state,
+                  setState,
+                  isInspired,
+                  userEssay,
+                  dispatch
+                )
               }
             >
               Get Feedback!
@@ -489,18 +463,6 @@ const Editor: NextPage = () => {
                     </div>
                   </>
                 )}
-                {/* <div className={styles.resultDots}>
-                  <Dot type="error" className={styles.creativityLevel1}>
-                    Everyday
-                  </Dot>
-                  <Dot type="warning" className={styles.creativityLevel2}>
-                    Transformative
-                  </Dot>
-                  <Dot className={styles.creativityLevel3}>Professional</Dot>
-                  <Dot type="success" className={styles.creativityLevel4}>
-                    Eminent
-                  </Dot>
-                </div> */}
                 <br /> <br />
                 <div
                   style={{
@@ -509,7 +471,6 @@ const Editor: NextPage = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  {/* <Link href="/inspiration"> */}
                   <Button
                     type="secondary-light"
                     className={styles.inspireMeButton}
@@ -519,7 +480,6 @@ const Editor: NextPage = () => {
                       ? 'Return'
                       : 'Inspire me!'}
                   </Button>
-                  {/* </Link> */}
                 </div>
               </div>
             </div>
