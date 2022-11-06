@@ -10,24 +10,65 @@ import { Grid, Text, Button } from '@geist-ui/react'
 const Information: NextPage = () => {
   return (
     <>
-      <Grid.Container gap={2} justify="center" height="100px">
+      <Grid.Container gap={2} justify="center">
         <Grid xs={24} md={12}>
-           <div>
-             <div className={styles.informationText}>
+          <div style={{ opacity: 0.75 }}>
+            <div className={styles.informationText}>
               {/* Content should be revised */}
               <h2>General Information</h2>
-             </div>
-             <div>
+            </div>
+            <div>
               <h3>About the tool:</h3>
               <Text>
-              This tool uses natural language processing techniques to process your text and extract parts of your text to compare with the real world knowledge. The tool then uses machine learning algorithms to predict the creative score of the parts of text. It then uses reasoning techniques to argue why certain parts of the texts were highly creative, and why certain parts were considered to be less creative. The tool also stores user information to track the creative performance of the user over time.
+                This tool uses natural language processing techniques to process
+                your text to compare for novelty with the real world data. The
+                tool then uses machine learning algorithms to predict the
+                creative score of the text. It then uses reasoning techniques to
+                argue why certain parts of the texts were highly creative, and
+                why certain parts were considered to be less creative. The tool
+                does not store any personal information of the user.
               </Text>
-              <h3>How to use?</h3> 
+              <h3>How to use?</h3>
               <Text>
-              You will be given with a topic to write a novel and creative essay based on your past experiences, your perspectives, and your beliefs. Below the essay topic, there will be a text editor section, where you are allowed to add, modify, or delete your text. After you click the Submit button, you will be provided with a feedback on how creative your essay was, how to further improve your essay. If you would like to get more feedback, click on the More feedback option. Here you will find a visualization on how you have performed overall. You also have the opportunity to update your essay based on the feedback received. If you make multiple updates, you will be able to see your progress over these multiple submissions i.e. you can have a clear visual representation of your creativity progress and improvement. We recommend you to adapt your essay based on the feedback atleast once, to understand how helpful the feedback was, for your improvement. If you have more questions, kindly contact the provider of the tool. Email: 
+                <b>Text Editor:</b> You will be given with a topic to write a
+                novel and creative essay based on your past experiences, your
+                perspectives, and your beliefs. Below the essay topic, there
+                will be a text editor section, where you are allowed to add,
+                modify, or delete your text. After you click the ‘Get Feedback!’
+                button, you will be provided with a feedback on the Creativity
+                Learning Dashboard.
               </Text>
-          </div>
-          <div className={styles.home}>
+              <Text>
+                <b>Creativity Learning Dashboard:</b> The dashboard displays
+                three scores that describes your creative level in each of the
+                three aspects: Originality (describes how original and novel
+                your story is), Fluency (describes how fluent are you with your
+                ideas and your thinking), Flexibility (describes how flexible
+                your thoughts are, and how you can discuss divergening ideas).
+                The dashboard also displays colored themes that were discovered
+                in your story. You can hover over the theme to highlight the
+                part of text it depicts. Lastly, the dashboard displays
+                suggestions for where you need to focus to improve your creative
+                performance.
+              </Text>
+              <Text>
+                <b>Inspiration Board:</b> Below the creativity learning
+                dashboard, you will find ‘Inspire Me! button. Click it, to allow
+                the machine learning model to help you with new ideas for
+                improving your story, and also for improving your creative
+                score.
+              </Text>
+              <Text>
+                <b>Tip!</b> We recommend you to update and revise your story
+                based on the feedback atleast once, to understand how helpful
+                the feedback was, for your improvement. If you have more
+                questions, kindly contact the provider of the tool.
+              </Text>
+              <Text>
+                <b>Email:</b> swathikrishnaraja@hu-berlin.de
+              </Text>
+            </div>
+            <div className={styles.home}>
               <Link href="/editor">
                 <Button type="secondary" ghost auto>
                   Back to Tool

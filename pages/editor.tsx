@@ -4,70 +4,44 @@ import {
   Grid,
   Text,
   Tooltip,
-  Textarea,
   Button,
   Spacer,
   Link as GeistLink,
   Progress,
-  Dot,
-  Avatar,
 } from '@geist-ui/react'
 import Link from 'next/link'
 import Bubble from '../components/Bubble'
-import React from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
+import {
+  getTopicCaptionFromID,
+  parseTopics,
+  Strength,
+  getTopicColorFromID,
+  otherThanTopics,
+  submitUserEssay,
+} from '../utils'
 
-const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
-  console.log('submit tapped')
+enum UserEssayAction {
+  INITIAL = 'initial',
+  INSPIRED = 'inspired',
+}
+
+const submitTapped = (
+  setLoadingIndicatorOpen,
+  state,
+  setState,
+  isInspired,
+  userEssay,
+  dispatch
+) => {
   let textEditor = document.getElementById('text-editor')
-  // setLoadingIndicatorOpen(false);
-  // let topics = [
-  //   0,
-  //   2,
-  //   3,
-  //   1,
-  //   7,
-  //   2,
-  //   1,
-  //   3,
-  //   4,
-  //   5,
-  //   4,
-  //   1,
-  //   2,
-  //   0,
-  // ];
-  // setState({
-  //   ...state,
-  //   data: {
-  //     fluency: 0.46,
-  //     flexibility: 0.67,
-  //     originality: 0.2,
-  //     topics: topics,
-  //     currentPage: 'initial'
-  //   }
-  // });
 
-  // let sentences = text.split('. ');
-  // let textEditorElement = document.getElementById('text-editor');
-  // console.log("element", textEditorElement);
-  // textEditorElement.innerHTML = "";
-  // for (let i = 0; i < sentences.length; i++) {
-  //   let sentence = sentences[i];
-  //   textEditorElement.innerHTML += "<span class=\"span-" + topics[i] + "\">" + sentence + ".</span> ";
-  // }
-  // console.log("element", textEditorElement.innerHTML);
-  // return;
-  // console.log(
-  //   'body',
-  //   JSON.stringify({
-  //     text: textEditor.innerText,
-  //     dataset: 'climate_change',
-  //   })
-  // )
-  fetch('http://3.70.5.36/creativity/', {
+  fetch('https://creativitysupporttool.de/creativity ', {
     method: 'POST',
+    cache: 'no-cache',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8',
+      accept: 'application/json',
     },
     body: JSON.stringify({
       text: textEditor.innerText,
@@ -78,7 +52,6 @@ const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
       response
         .json()
         .then((data) => {
-          console.log(data)
           setLoadingIndicatorOpen(false)
           setState({
             ...state,
@@ -90,9 +63,45 @@ const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
               currentPage: 'initial',
             },
           })
+
+          if (!isInspired) {
+            dispatch({
+              type: UserEssayAction.INITIAL,
+              payload: {
+                text: textEditor.innerText,
+                fluency: data.fluency,
+                flexibility: data.flexibility,
+                originality: data.originality,
+              },
+            })
+          }
+
+          if (isInspired && !userEssay.inspired.text) {
+            dispatch({
+              type: UserEssayAction.INSPIRED,
+              payload: {
+                text: textEditor.innerText,
+                fluency: data.fluency,
+                flexibility: data.flexibility,
+                originality: data.originality,
+              },
+            })
+
+            submitUserEssay({
+              userEssay: {
+                ...userEssay,
+                inspired: {
+                  text: textEditor.innerText,
+                  fluency: data.fluency,
+                  flexibility: data.flexibility,
+                  originality: data.originality,
+                },
+              },
+            })
+          }
+
           let textEditorElement = document.getElementById('text-editor')
           let sentences = textEditorElement.innerText.split('. ')
-          console.log('element', textEditorElement)
           textEditorElement.innerHTML = ''
           for (let i = 0; i < sentences.length; i++) {
             let sentence = sentences[i]
@@ -115,102 +124,43 @@ const submitTapped = (setLoadingIndicatorOpen, state, setState) => {
     })
 }
 
-const getTopicsDataFromTopics = (topics) => {
-  let topicsData = [] // [{id: 0, count: 5}, ...]
-  let totalCount = 0
-  for (let i = 0; i < topics.length; i++) {
-    let topic = topics[i]
-    let topicData = topicsData.find((topicData) => topicData.id === topic)
-    if (topicData) {
-      topicData.count++
-    } else {
-      topicsData.push({ id: topic, count: 1 })
-    }
-    totalCount += 1
-  }
-  return [topicsData, totalCount]
-}
+const essayReducer = (state, action) => {
+  const { type, payload } = action
+  switch (type) {
+    case UserEssayAction.INITIAL:
+      return {
+        ...state,
+        initial: payload,
+      }
 
-const getTopicCaptionFromID = (id) => {
-  switch (id) {
-    case 0:
-      return 'Climate Change'
-    case 1:
-      return 'Public Transportation'
-    case 2:
-      return 'Reneable Energy'
-    case 3:
-      return 'Trees and Deforestation'
-    case 4:
-      return 'Pollution Reduction'
-    case 5:
-      return 'Food Products'
-    case 6:
-      return 'Governments and Companies'
-    case 7:
-      return 'Recycling and Packaging'
-    case 8:
-      return 'Water and Heat'
-    case 9:
-      return 'Lights and Appliances'
-    case 10:
-      return 'Fashion and Clothes'
-    case 11:
-      return 'Food Waste and Leftover'
+    case UserEssayAction.INSPIRED:
+      return {
+        ...state,
+        inspired: payload,
+      }
+
     default:
-      return 'Unknown Topic'
+      return state
   }
 }
-
-const getTopicColorFromID = (id) => {
-  switch (id) {
-    case 0:
-      return 'green'
-    case 1:
-      return 'purple'
-    case 2:
-      return 'orange'
-    case 3:
-      return 'darkgreen'
-    case 4:
-      return 'brown'
-    case 5:
-      return 'red'
-    case 6:
-      return 'blue'
-    case 7:
-      return 'grey'
-    case 8:
-      return 'lightblue'
-    case 9:
-      return 'yellow'
-    case 10:
-      return 'magenta'
-    case 11:
-      return 'darkorange'
-    default:
-      return 'black'
-  }
-}
-
-const getStrengthsFromData = (data) => {
-  return ['Strength', 'Super Strength'] // any text you want based on data.fluency, etc.
-}
-
-const otherThanTopics = (topics) => {
-  let otherThanTopics = []
-  for (let i = 0; i < 12; i++) {
-    if (!topics.find((topic) => topic.id === i)) {
-      otherThanTopics.push({ id: i, count: 4 })
-    }
-  }
-  return otherThanTopics
-}
-
-let text =
-  'Please start writing your story below, and get feedback on how novel your ideas are, and how original your story work is. The tool does not provide feedback on your grammar or writing styles, rather it provides feedback on the creative quality of your ideas, and quantity of ideas. Please start writing your story below, and get feedback on how novel your ideas are, and how original your story work is. The tool does not provide feedback on your grammar or writing styles, rather it provides feedback on the creative quality of your ideas, and quantity of ideas. Please start writing your story below, and get feedback on how novel your ideas are.'
-
 const Editor: NextPage = () => {
+  const [userEssay, dispatch] = useReducer(essayReducer, {
+    initial: {
+      text: '',
+      fluency: 0,
+      originality: 0,
+      flexibility: 0,
+    },
+    inspired: {
+      text: '',
+      fluency: 0,
+      originality: 0,
+      flexibility: 0,
+    },
+  })
+
+  const [isInspired, setIsInspired] = useState(false)
+
   const [isLoadingIndicatorOpen, setLoadingIndicatorOpen] =
     React.useState(false)
   const [state, setState] = React.useState({
@@ -222,9 +172,7 @@ const Editor: NextPage = () => {
       currentPage: 'initial', // initial, inspireMe
     },
   })
-  const resultsFromFunction = getTopicsDataFromTopics(state.data.topics)
-  const topicsData: any[] = resultsFromFunction[0] as any[]
-  const totalCount: number = +resultsFromFunction[1]
+  const topicsData = parseTopics(state.data.topics)
   const colors = {
     20: '#58A984',
     40: '#328765',
@@ -233,7 +181,7 @@ const Editor: NextPage = () => {
   }
 
   const inspireMeTapped = (state, setState) => {
-    console.log('inspire me tapped')
+    setIsInspired(true)
     if (state.data.currentPage === 'initial') {
       setState({
         ...state,
@@ -256,7 +204,7 @@ const Editor: NextPage = () => {
   return (
     <>
       <div className={styles.h6}>
-        <h6>
+        <h6 style={{ fontSize: '1em', fontWeight: '500' }}>
           To know about how this educational application works, and what
           algorithms our tool uses, click{' '}
           <a href="/information" className={styles.hereButton}>
@@ -276,11 +224,11 @@ const Editor: NextPage = () => {
               Story
             </Text>
             <Text h1 className={styles.textEditorHeading2}>
-              Please start writing your story below, and get feedback on how
-              novel your ideas are, and how original your story work is. The
-              tool does not provide feedback on your grammar or writing styles,
-              rather it provides feedback on the creative quality of your ideas,
-              and quantity of ideas.
+              Imagine you are in an assessment center of a global think-tank.
+              Your task is to come up with ideas to fight climate change. Please
+              write around 150 to 200 words with as many high-quality unique
+              ideas as possible. Use your creativity to impress your future
+              colleagues.
             </Text>
             <Spacer w={3} />
             <div
@@ -299,7 +247,14 @@ const Editor: NextPage = () => {
               type="secondary-light"
               className={styles.textEditorSubmit}
               onClick={() =>
-                submitTapped(setLoadingIndicatorOpen, state, setState)
+                submitTapped(
+                  setLoadingIndicatorOpen,
+                  state,
+                  setState,
+                  isInspired,
+                  userEssay,
+                  dispatch
+                )
               }
             >
               Get Feedback!
@@ -309,7 +264,7 @@ const Editor: NextPage = () => {
 
         {/* Result panel */}
         <Grid xs={24} md={12} className={styles.resultPanel}>
-          <div className={styles.editorLayout}>
+          <div style={{ width: '100%' }}>
             <div
               className={styles.resultContainer}
               style={{
@@ -323,145 +278,116 @@ const Editor: NextPage = () => {
                   Creativity Learning Dashboard
                 </Text>
                 <Tooltip
+                  style={{
+                    display: 'inline',
+                    cursor: 'help',
+                    color: '#328765',
+                    fontSize: '1.2em',
+                  }}
                   text={
-                    'Creativity is the use of one’s imagination or original ideas to create something new. It is the ability to perceive the world in new ways and to make connections between seemingly unrelated phenomena, and to generate solutions. Creativity is also our ability to tap into our knowledge, insight, information, inspiration and all the fragments populating our minds – that we’ve accumulated over the years and to combine them in extraordinary new ways.'
+                    'Creativity is the use of one’s imagination or original ideas to create something new. It is the ability to perceive the world in new ways and to make connections between seemingly unrelated phenomena, and to generate solutions. Creativity is also our ability to tap into our knowledge and all the fragments populating our minds – that we’ve accumulated over the years and to combine them in extraordinary new ways.'
                   }
-                  trigger="click"
+                  trigger="hover"
                   type="dark"
                   className={styles.tooltip}
                 >
-                  <GeistLink color href="#" className={styles.creativityLink}>
-                    What is creativity?
-                  </GeistLink>
+                  What is creativity?
                 </Tooltip>
-              </div>
-
-              {state.data.currentPage == 'initial' && (
-                <>
-                  <Spacer w={5} />
-                  {/* Progress bar and feedback legend */}
-                  Originality <br />
-                  <Tooltip
-                    style={{ display: 'inline' }}
-                    text={'Some details on Originality'}
-                    trigger="hover"
-                    type="dark"
-                    className={styles.tooltip}
-                  >
-                    <GeistLink color href="#" className={styles.creativityLink}>
-                      Details...
-                    </GeistLink>
-                  </Tooltip>
-                  <br />
-                  <Progress
-                    colors={colors}
-                    type="success"
-                    value={state.data.originality * 100}
-                  />{' '}
-                  <br />
-                  Fluency <br />
-                  <Tooltip
-                    style={{ display: 'inline' }}
-                    text={'Some details on Fluency'}
-                    trigger="hover"
-                    type="dark"
-                    className={styles.tooltip}
-                  >
-                    <GeistLink color href="#" className={styles.creativityLink}>
-                      Details...
-                    </GeistLink>
-                  </Tooltip>
-                  <br />
-                  <Progress
-                    colors={colors}
-                    type="success"
-                    value={state.data.fluency * 100}
-                  />{' '}
-                  <br />
-                  Flexibility <br />
-                  <Tooltip
-                    style={{ display: 'inline' }}
-                    text={'Some details on Flexibility'}
-                    trigger="hover"
-                    type="dark"
-                    className={styles.tooltip}
-                  >
-                    <GeistLink color href="#" className={styles.creativityLink}>
-                      Details...
-                    </GeistLink>
-                  </Tooltip>
-                  <br />
-                  <Progress
-                    colors={colors}
-                    type="success"
-                    value={state.data.flexibility * 100}
-                  />
-                  <Spacer w={10} />
-                  <div>
-                    <Text
-                      h1
-                      className={styles.textEditorHeading2}
-                      style={{ textAlign: 'center' }}
+                {state.data.currentPage == 'initial' && (
+                  <>
+                    <Spacer w={5} />
+                    {/* Progress bar and feedback legend */}
+                    <Tooltip
+                      style={{ display: 'inline', cursor: 'help' }}
+                      text={
+                        'Originality is the ability to produce new work that is distinguishable from other works.'
+                      }
+                      trigger="hover"
+                      type="dark"
+                      className={styles.tooltip}
                     >
-                      Here are a few topics we identified from your essay. The
-                      size of the bubble depicts the weight of these topics in
-                      your essay.
-                    </Text>
-
-                    <div
-                      style={{
-                        overflowY: 'scroll',
-                        width: '650px',
-                        height: '100px',
-                        lineHeight: '300%',
-                        whiteSpace: 'nowrap',
-                      }}
+                      Originality <br />
+                    </Tooltip>
+                    <br />
+                    <Progress
+                      colors={colors}
+                      type="success"
+                      value={state.data.originality * 100}
+                    />{' '}
+                    <br />
+                    <Tooltip
+                      style={{ display: 'inline', cursor: 'help' }}
+                      text={`Fluency is the ability to think of as many ideas on any given topic and being affluent in one’s thoughts.
+                    `}
+                      trigger="hover"
+                      type="dark"
+                      className={styles.tooltip}
                     >
-                      {/* placeholder to show the topic feedback as bubbles */}
-                      {topicsData.map((topic, index) => {
-                        return (
-                          <>
-                            <span
-                              style={{
-                                backgroundColor: getTopicColorFromID(topic.id),
-                                padding: '10px',
-                                borderRadius: '999px',
-                                color: 'white',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              {getTopicCaptionFromID(topic.id)}
-                            </span>
-                            &nbsp;
-                          </>
-                        )
-                      })}
-                    </div>
-
+                      Fluency <br />
+                    </Tooltip>
+                    <br />
+                    <Progress
+                      colors={colors}
+                      type="success"
+                      value={state.data.fluency * 100}
+                    />{' '}
+                    <br />
+                    <Tooltip
+                      style={{ display: 'inline', cursor: 'help' }}
+                      text={`Flexibility is the ability to think of diverging ideas on any given topic and being able to look at it from many different perspectives.
+                    `}
+                      trigger="hover"
+                      type="dark"
+                      className={styles.tooltip}
+                    >
+                      Flexibility <br />
+                    </Tooltip>
+                    <br />
+                    <Progress
+                      colors={colors}
+                      type="success"
+                      value={state.data.flexibility * 100}
+                    />
                     <Spacer w={10} />
-                    <div style={{ textAlign: 'center' }}>
-                      We identified the following strenghts in your creative
-                      writing style: <br />
-                      <ul>
-                        {getStrengthsFromData(state.data).map((strength) => {
+                    <div>
+                      <Text
+                        h1
+                        className={styles.textEditorHeading2}
+                        style={{ textAlign: 'center' }}
+                      >
+                        Here are a few themes we identified in your story.
+                      </Text>
+
+                      <div className={styles.topicsContainer}>
+                        {/* placeholder to show the topic feedback as bubbles */}
+                        {topicsData.map((topic) => {
                           return (
+                            <Bubble
+                              color={getTopicColorFromID(topic)}
+                              name={getTopicCaptionFromID(topic)}
+                            />
+                          )
+                        })}
+                      </div>
+
+                      <Spacer w={10} />
+                      <div style={{ textAlign: 'center' }}>
+                        <ul>
+                          {
                             <>
                               <span style={{ textAlign: 'center' }}>
-                                {strength}
+                                {<Strength data={state.data} />}
                               </span>
                               <br />
                             </>
-                          )
-                        })}
-                      </ul>
+                          }
+                        </ul>
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
-
-              <div>
+                  </>
+                )}
                 {state.data.currentPage == 'inspireMe' && (
-                  <>
+                  <div style={{ width: '100%' }}>
                     <br />
                     These are the topics you mentioned:
                     <br />
@@ -470,49 +396,37 @@ const Editor: NextPage = () => {
                       className={styles.bubblesFeedback}
                       style={{ backgroundColor: 'white' }}
                     >
-                      {topicsData.map((topic, index) => {
+                      {topicsData.map((topic) => {
                         return (
                           <Bubble
-                            size={(topic.count / totalCount) * 35}
-                            color={getTopicColorFromID(topic.id)}
-                            name={getTopicCaptionFromID(topic.id)}
+                            color={getTopicColorFromID(topic)}
+                            name={getTopicCaptionFromID(topic)}
                           />
                         )
                       })}
                     </div>
                     <br />
                     <br />
-                    These are the topics you didn't mention:
+                    Here we inspire you with new themes or ideas for making your
+                    story more creative and novel. Try including these themes in
+                    your story, and get your feedback once again.
                     <br />
                     <br />
                     <div
                       className={styles.bubblesFeedback}
                       style={{ backgroundColor: 'white' }}
                     >
-                      {otherThanTopics(topicsData).map((topic, index) => {
+                      {otherThanTopics(topicsData).map((topic) => {
                         return (
                           <Bubble
-                            size={(topic.count / totalCount) * 25}
-                            color={getTopicColorFromID(topic.id)}
-                            name={getTopicCaptionFromID(topic.id)}
+                            color={getTopicColorFromID(topic)}
+                            name={getTopicCaptionFromID(topic)}
                           />
                         )
                       })}
                     </div>
-                  </>
+                  </div>
                 )}
-                {/* <div className={styles.resultDots}>
-                  <Dot type="error" className={styles.creativityLevel1}>
-                    Everyday
-                  </Dot>
-                  <Dot type="warning" className={styles.creativityLevel2}>
-                    Transformative
-                  </Dot>
-                  <Dot className={styles.creativityLevel3}>Professional</Dot>
-                  <Dot type="success" className={styles.creativityLevel4}>
-                    Eminent
-                  </Dot>
-                </div> */}
                 <br /> <br />
                 <div
                   style={{
@@ -521,7 +435,6 @@ const Editor: NextPage = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  {/* <Link href="/inspiration"> */}
                   <Button
                     type="secondary-light"
                     className={styles.inspireMeButton}
@@ -531,7 +444,6 @@ const Editor: NextPage = () => {
                       ? 'Return'
                       : 'Inspire me!'}
                   </Button>
-                  {/* </Link> */}
                 </div>
               </div>
             </div>
