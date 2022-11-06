@@ -1,25 +1,17 @@
 import styles from '../styles/Home.module.css'
 import { Text } from '@geist-ui/react'
 
-const Bubble: React.FC<{ size: number; name: string; color: string }> = ({
-  size,
-  name,
-  color,
-}) => {
+const Bubble: React.FC<{ name: string; color: string }> = ({ name, color }) => {
   return (
-    <div className={styles.bubbleContainer}>
-      <div
-        style={{
-          width: size,
-          height: size,
-          borderRadius: 100,
-          backgroundColor: color,
-        }}
-      ></div>
-      <Text h1 className={styles.bubbleTopicHeading}>
-        {name}
-      </Text>
-    </div>
+    <Text
+      style={{
+        backgroundImage: `linear-gradient(150deg, #8ac2a8, ${color})`,
+      }}
+      h1
+      className={styles.bubbleTopicHeading}
+    >
+      {name}
+    </Text>
   )
 }
 

@@ -14,8 +14,8 @@ import Bubble from '../components/Bubble'
 import React, { useEffect, useReducer, useState } from 'react'
 import {
   getTopicCaptionFromID,
-  getTopicsDataFromTopics,
-  getStrengthsFromData,
+  parseTopics,
+  Strength,
   getTopicColorFromID,
   otherThanTopics,
   submitUserEssay,
@@ -124,9 +124,6 @@ const submitTapped = (
     })
 }
 
-let text =
-  'Please start writing your story below, and get feedback on how novel your ideas are, and how original your story work is. The tool does not provide feedback on your grammar or writing styles, rather it provides feedback on the creative quality of your ideas, and quantity of ideas. Please start writing your story below, and get feedback on how novel your ideas are, and how original your story work is. The tool does not provide feedback on your grammar or writing styles, rather it provides feedback on the creative quality of your ideas, and quantity of ideas. Please start writing your story below, and get feedback on how novel your ideas are.'
-
 const essayReducer = (state, action) => {
   const { type, payload } = action
   switch (type) {
@@ -175,9 +172,7 @@ const Editor: NextPage = () => {
       currentPage: 'initial', // initial, inspireMe
     },
   })
-  const resultsFromFunction = getTopicsDataFromTopics(state.data.topics)
-  const topicsData: any[] = resultsFromFunction[0] as any[]
-  const totalCount: number = +resultsFromFunction[1]
+  const topicsData = parseTopics(state.data.topics)
   const colors = {
     20: '#58A984',
     40: '#328765',
@@ -209,7 +204,7 @@ const Editor: NextPage = () => {
   return (
     <>
       <div className={styles.h6}>
-        <h6>
+        <h6 style={{ fontSize: '1em', fontWeight: '500' }}>
           To know about how this educational application works, and what
           algorithms our tool uses, click{' '}
           <a href="/information" className={styles.hereButton}>
@@ -229,11 +224,11 @@ const Editor: NextPage = () => {
               Story
             </Text>
             <Text h1 className={styles.textEditorHeading2}>
-              Please start writing your story below, and get feedback on how
-              novel your ideas are, and how original your story work is. The
-              tool does not provide feedback on your grammar or writing styles,
-              rather it provides feedback on the creative quality of your ideas,
-              and quantity of ideas.
+              Imagine you are in an assessment center of a global think-tank.
+              Your task is to come up with ideas to fight climate change. Please
+              write around 150 to 200 words with as many high-quality unique
+              ideas as possible. Use your creativity to impress your future
+              colleagues.
             </Text>
             <Spacer w={3} />
             <div
@@ -269,7 +264,7 @@ const Editor: NextPage = () => {
 
         {/* Result panel */}
         <Grid xs={24} md={12} className={styles.resultPanel}>
-          <div className={styles.editorLayout}>
+          <div style={{ width: '100%' }}>
             <div
               className={styles.resultContainer}
               style={{
@@ -283,143 +278,119 @@ const Editor: NextPage = () => {
                   Creativity Learning Dashboard
                 </Text>
                 <Tooltip
+                  style={{
+                    display: 'inline',
+                    cursor: 'help',
+                    color: '#328765',
+                    fontSize: '1.2em',
+                  }}
                   text={
-                    'Creativity is the use of one’s imagination or original ideas to create something new. It is the ability to perceive the world in new ways and to make connections between seemingly unrelated phenomena, and to generate solutions. Creativity is also our ability to tap into our knowledge, insight, information, inspiration and all the fragments populating our minds – that we’ve accumulated over the years and to combine them in extraordinary new ways.'
+                    'Creativity is the use of one’s imagination or original ideas to create something new. It is the ability to perceive the world in new ways and to make connections between seemingly unrelated phenomena, and to generate solutions. Creativity is also our ability to tap into our knowledge and all the fragments populating our minds – that we’ve accumulated over the years and to combine them in extraordinary new ways.'
                   }
-                  trigger="click"
+                  trigger="hover"
                   type="dark"
                   className={styles.tooltip}
                 >
-                  <GeistLink color href="#" className={styles.creativityLink}>
-                    What is creativity?
-                  </GeistLink>
+                  What is creativity?
                 </Tooltip>
-              </div>
-
-              {state.data.currentPage == 'initial' && (
-                <>
-                  <Spacer w={5} />
-                  {/* Progress bar and feedback legend */}
-                  Originality <br />
-                  <Tooltip
-                    style={{ display: 'inline' }}
-                    text={'Some details on Originality'}
-                    trigger="hover"
-                    type="dark"
-                    className={styles.tooltip}
-                  >
-                    <GeistLink color href="#" className={styles.creativityLink}>
-                      Details...
-                    </GeistLink>
-                  </Tooltip>
-                  <br />
-                  <Progress
-                    colors={colors}
-                    type="success"
-                    value={state.data.originality * 100}
-                  />{' '}
-                  <br />
-                  Fluency <br />
-                  <Tooltip
-                    style={{ display: 'inline' }}
-                    text={'Some details on Fluency'}
-                    trigger="hover"
-                    type="dark"
-                    className={styles.tooltip}
-                  >
-                    <GeistLink color href="#" className={styles.creativityLink}>
-                      Details...
-                    </GeistLink>
-                  </Tooltip>
-                  <br />
-                  <Progress
-                    colors={colors}
-                    type="success"
-                    value={state.data.fluency * 100}
-                  />{' '}
-                  <br />
-                  Flexibility <br />
-                  <Tooltip
-                    style={{ display: 'inline' }}
-                    text={'Some details on Flexibility'}
-                    trigger="hover"
-                    type="dark"
-                    className={styles.tooltip}
-                  >
-                    <GeistLink color href="#" className={styles.creativityLink}>
-                      Details...
-                    </GeistLink>
-                  </Tooltip>
-                  <br />
-                  <Progress
-                    colors={colors}
-                    type="success"
-                    value={state.data.flexibility * 100}
-                  />
-                  <Spacer w={10} />
-                  <div>
-                    <Text
-                      h1
-                      className={styles.textEditorHeading2}
-                      style={{ textAlign: 'center' }}
-                    >
-                      Here are a few topics we identified from your essay. The
-                      size of the bubble depicts the weight of these topics in
-                      your essay.
-                    </Text>
-
-                    <div
-                      style={{
-                        overflowY: 'scroll',
-                        width: '650px',
-                        height: '100px',
-                        lineHeight: '300%',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {/* placeholder to show the topic feedback as bubbles */}
-                      {topicsData.map((topic, index) => {
-                        return (
-                          <>
-                            <span
-                              style={{
-                                backgroundColor: getTopicColorFromID(topic.id),
-                                padding: '10px',
-                                borderRadius: '999px',
-                                color: 'white',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              {getTopicCaptionFromID(topic.id)}
-                            </span>
-                            &nbsp;
-                          </>
-                        )
-                      })}
-                    </div>
-
-                    <Spacer w={10} />
-                    <div style={{ textAlign: 'center' }}>
-                      We identified the following strenghts in your creative
-                      writing style: <br />
-                      <ul>
-                        {
-                          <>
-                            <span style={{ textAlign: 'center' }}>
-                              {getStrengthsFromData(state.data)}
-                            </span>
-                            <br />
-                          </>
-                        }
-                      </ul>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <div>
-                {state.data.currentPage == 'inspireMe' && (
+                {state.data.currentPage == 'initial' && (
                   <>
+                    <Spacer w={5} />
+                    {/* Progress bar and feedback legend */}
+                    <Tooltip
+                      style={{ display: 'inline', cursor: 'help' }}
+                      text={
+                        'Originality is the ability to produce new work that is distinguishable from other works.'
+                      }
+                      trigger="hover"
+                      type="dark"
+                      className={styles.tooltip}
+                    >
+                      Originality <br />
+                    </Tooltip>
+                    <br />
+                    <Progress
+                      colors={colors}
+                      type="success"
+                      value={state.data.originality * 100}
+                    />{' '}
+                    <br />
+                    <Tooltip
+                      style={{ display: 'inline', cursor: 'help' }}
+                      text={`Fluency is the ability to think of as many ideas on any given topic and being affluent in one’s thoughts.
+                    `}
+                      trigger="hover"
+                      type="dark"
+                      className={styles.tooltip}
+                    >
+                      Fluency <br />
+                    </Tooltip>
+                    <br />
+                    <Progress
+                      colors={colors}
+                      type="success"
+                      value={state.data.fluency * 100}
+                    />{' '}
+                    <br />
+                    <Tooltip
+                      style={{ display: 'inline', cursor: 'help' }}
+                      text={`Flexibility is the ability to think of diverging ideas on any given topic and being able to look at it from many different perspectives.
+                    `}
+                      trigger="hover"
+                      type="dark"
+                      className={styles.tooltip}
+                    >
+                      Flexibility <br />
+                    </Tooltip>
+                    <br />
+                    <Progress
+                      colors={colors}
+                      type="success"
+                      value={state.data.flexibility * 100}
+                    />
+                    <Spacer w={10} />
+                    <div>
+                      <Text
+                        h1
+                        className={styles.textEditorHeading2}
+                        style={{ textAlign: 'center' }}
+                      >
+                        Here are a few themes we identified in your story. We
+                        highlight each of the themes using a different colour.
+                        Hover over the theme to find out which sentence in your
+                        story talks about the following theme.
+                      </Text>
+
+                      <div className={styles.topicsContainer}>
+                        {/* placeholder to show the topic feedback as bubbles */}
+                        {topicsData.map((topic) => {
+                          return (
+                            <Bubble
+                              color={getTopicColorFromID(topic)}
+                              name={getTopicCaptionFromID(topic)}
+                            />
+                          )
+                        })}
+                      </div>
+
+                      <Spacer w={10} />
+                      <div style={{ textAlign: 'center' }}>
+                        <ul>
+                          {
+                            <>
+                              <span style={{ textAlign: 'center' }}>
+                                {<Strength data={state.data} />}
+                              </span>
+                              <br />
+                            </>
+                          }
+                        </ul>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {state.data.currentPage == 'inspireMe' && (
+                  <div style={{ width: '100%' }}>
                     <br />
                     These are the topics you mentioned:
                     <br />
@@ -428,12 +399,11 @@ const Editor: NextPage = () => {
                       className={styles.bubblesFeedback}
                       style={{ backgroundColor: 'white' }}
                     >
-                      {topicsData.map((topic, index) => {
+                      {topicsData.map((topic) => {
                         return (
                           <Bubble
-                            size={(topic.count / totalCount) * 35}
-                            color={getTopicColorFromID(topic.id)}
-                            name={getTopicCaptionFromID(topic.id)}
+                            color={getTopicColorFromID(topic)}
+                            name={getTopicCaptionFromID(topic)}
                           />
                         )
                       })}
@@ -447,17 +417,16 @@ const Editor: NextPage = () => {
                       className={styles.bubblesFeedback}
                       style={{ backgroundColor: 'white' }}
                     >
-                      {otherThanTopics(topicsData).map((topic, index) => {
+                      {otherThanTopics(topicsData).map((topic) => {
                         return (
                           <Bubble
-                            size={(topic.count / totalCount) * 25}
-                            color={getTopicColorFromID(topic.id)}
-                            name={getTopicCaptionFromID(topic.id)}
+                            color={getTopicColorFromID(topic)}
+                            name={getTopicCaptionFromID(topic)}
                           />
                         )
                       })}
                     </div>
-                  </>
+                  </div>
                 )}
                 <br /> <br />
                 <div

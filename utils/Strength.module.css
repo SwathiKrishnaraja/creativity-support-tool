@@ -1,0 +1,20 @@
+.feedback {
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.feedbackHeading {
+  font-weight: 500;
+}
+
+.positiveFeedback {
+  color: green;
+  list-style-type: disc;
+}
+
+.negativeFeedback {
+  color: #852a2a;
+  list-style-type: disc;
+}
