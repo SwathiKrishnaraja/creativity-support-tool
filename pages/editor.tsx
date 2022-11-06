@@ -355,10 +355,7 @@ const Editor: NextPage = () => {
                         className={styles.textEditorHeading2}
                         style={{ textAlign: 'center' }}
                       >
-                        Here are a few themes we identified in your story. We
-                        highlight each of the themes using a different colour.
-                        Hover over the theme to find out which sentence in your
-                        story talks about the following theme.
+                        Here are a few themes we identified in your story.
                       </Text>
 
                       <div className={styles.topicsContainer}>
@@ -410,7 +407,9 @@ const Editor: NextPage = () => {
                     </div>
                     <br />
                     <br />
-                    These are the topics you didn't mention:
+                    Here we inspire you with new themes or ideas for making your
+                    story more creative and novel. Try including these themes in
+                    your story, and get your feedback once again.
                     <br />
                     <br />
                     <div
