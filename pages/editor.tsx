@@ -349,41 +349,43 @@ const Editor: NextPage = () => {
                       value={state.data.flexibility * 100}
                     />
                     <Spacer w={10} />
-                    <div>
-                      <Text
-                        h1
-                        className={styles.textEditorHeading2}
-                        style={{ textAlign: 'center' }}
-                      >
-                        Here are a few themes we identified in your story.
-                      </Text>
+                    {topicsData.length > 1 ? (
+                      <div>
+                        <Text
+                          h1
+                          className={styles.textEditorHeading2}
+                          style={{ textAlign: 'center' }}
+                        >
+                          Here are a few themes we identified in your story.
+                        </Text>
 
-                      <div className={styles.topicsContainer}>
-                        {/* placeholder to show the topic feedback as bubbles */}
-                        {topicsData.map((topic) => {
-                          return (
-                            <Bubble
-                              color={getTopicColorFromID(topic)}
-                              name={getTopicCaptionFromID(topic)}
-                            />
-                          )
-                        })}
-                      </div>
+                        <div className={styles.topicsContainer}>
+                          {/* placeholder to show the topic feedback as bubbles */}
+                          {topicsData.map((topic) => {
+                            return (
+                              <Bubble
+                                color={getTopicColorFromID(topic)}
+                                name={getTopicCaptionFromID(topic)}
+                              />
+                            )
+                          })}
+                        </div>
 
-                      <Spacer w={10} />
-                      <div style={{ textAlign: 'center' }}>
-                        <ul>
-                          {
-                            <>
-                              <span style={{ textAlign: 'center' }}>
-                                {<Strength data={state.data} />}
-                              </span>
-                              <br />
-                            </>
-                          }
-                        </ul>
+                        <Spacer w={10} />
+                        <div style={{ textAlign: 'center' }}>
+                          <ul>
+                            {
+                              <>
+                                <span style={{ textAlign: 'center' }}>
+                                  {<Strength data={state.data} />}
+                                </span>
+                                <br />
+                              </>
+                            }
+                          </ul>
+                        </div>
                       </div>
-                    </div>
+                    ) : null}
                   </>
                 )}
                 {state.data.currentPage == 'inspireMe' && (
